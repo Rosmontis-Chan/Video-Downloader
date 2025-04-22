@@ -1,146 +1,177 @@
-<!doctype html>
-
-
-  
-  
-  Video Downloader
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Video Downloader Kawaii</title>
   <style>
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: #fff0f5;
+      background: #ffffff;
       background-image: 
-        linear-gradient(0deg, #ffe0ec 1px, transparent 1px),
-        linear-gradient(90deg, #ffe0ec 1px, transparent 1px);
+        linear-gradient(0deg, #e0e0e0 1px, transparent 1px),
+        linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
       background-size: 20px 20px;
     }
+
     .banner {
-      width: 230px;
-      height: 55px;
-      background-color: #ffe4ec;
-      border: 2px solid #ff99bb;
-      border-radius: 20px;
+      width: 260px;
+      height: 60px;
+      background-color: #f5f5f5;
+      border: 2px solid #d3d3d3;
+      border-radius: 25px;
       margin: 50px auto 20px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      color: #ff4d6d;
-      animation: float 3s infinite alternate ease-in-out;
-      box-shadow: 0 4px 12px rgba(255, 182, 193, 0.5);
-      font-size: 1.2em;
+      color: #555;
+      font-size: 1.3em;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      animation: float 3s ease-in-out infinite alternate;
     }
+
     @keyframes float {
       from { transform: translateY(-5px); }
       to { transform: translateY(5px); }
     }
+
     .container {
       max-width: 600px;
       margin: 30px auto;
       background: white;
       padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      border-radius: 25px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.05);
       text-align: center;
-      border: 2px dashed #ff99bb;
+      border: 2px dashed #ccc;
     }
+
     h1 {
-      color: #ff4d6d;
+      color: #666;
       margin-bottom: 20px;
-      font-size: 2.3em;
+      font-size: 2.2em;
     }
+
     input[type="text"] {
       width: 80%;
-      padding: 12px;
-      border: 2px solid #ffb3c6;
-      border-radius: 14px;
+      padding: 14px;
+      border: 2px solid #ccc;
+      border-radius: 18px;
       margin-bottom: 20px;
       font-size: 1em;
       outline: none;
     }
+
     button {
-      background-color: #ff8fab;
-      color: white;
+      background-color: #d1c4e9;
+      color: #4a148c;
       border: none;
-      padding: 12px 25px;
-      border-radius: 14px;
+      padding: 12px 30px;
+      border-radius: 25px;
       font-size: 1em;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin: 5px;
     }
+
     button:hover {
-      background-color: #ff5c8a;
+      background-color: #b39ddb;
       transform: scale(1.05);
     }
-    p.note {
-      font-size: 0.9em;
-      color: #999;
-      margin-top: 20px;
-    }
+
     #loading {
       display: none;
-      margin-top: 10px;
+      margin-top: 20px;
       font-size: 0.9em;
-      color: #ff4d6d;
+      color: #999;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #a29bfe;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    p.note {
+      font-size: 0.9em;
+      color: #aaa;
+      margin-top: 20px;
     }
   </style>
+</head>
+<body>
 
+<div class="banner">
+  Download Video
+</div>
 
-
-  <div class="banner">
-    Download Video
+<div class="container">
+  <h1>Download Video Instan</h1>
+  <input type="text" id="url" placeholder="Tempelkan link video di sini..." />
+  <br />
+  <button onclick="downloadVideo()">Mulai Download</button>
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>Sebentar yaa, lagi diproses...</p>
   </div>
+  <p class="note">Support: YouTube, Instagram, TikTok, Facebook, dan lainnya.</p>
+</div>
 
-  <div class="container">
-    <h1>Download Video Instan</h1>
-    <input type="text" id="url" placeholder="Tempelkan link video di sini..." />
-    <br />
-    <button onclick="downloadVideo()">Download</button>
-    <p id="loading">Sedang memproses link...</p>
-    <p class="note">Dukung berbagai platform: YouTube, Instagram, TikTok, Facebook, dll.</p>
-  </div>
+<script>
+  async function downloadVideo() {
+    const urlInput = document.getElementById("url");
+    const loadingDiv = document.getElementById("loading");
+    const url = urlInput.value.trim();
 
-  <script>
-    async function downloadVideo() {
-      const urlInput = document.getElementById("url");
-      const loadingText = document.getElementById("loading");
-      const url = urlInput.value.trim();
-
-      if (!url) {
-        alert("Masukkan URL video dulu ya!");
-        return;
-      }
-
-      loadingText.style.display = "block";
-
-      try {
-        const response = await fetch("https://all-social-media-video-downloader.p.rapidapi.com/rapidapi", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            "X-RapidAPI-Key": "837393c934msh8747bcb37b91d8ep1ba687jsn4ed59f6c1497",
-            "X-RapidAPI-Host": "all-social-media-video-downloader.p.rapidapi.com"
-          },
-          body: JSON.stringify({ url: url })
-        });
-
-        const data = await response.json();
-        loadingText.style.display = "none";
-
-        if (data && data.links && data.links.length > 0) {
-          const downloadUrl = data.links[0].link;
-          window.open(downloadUrl, "_blank");
-        } else {
-          alert("Gagal menemukan link download. Coba lagi ya!");
-        }
-
-      } catch (error) {
-        console.error(error);
-        loadingText.style.display = "none";
-        alert("Terjadi kesalahan saat mengunduh.");
-      }
+    if (!url) {
+      alert("Masukkan URL video dulu yaa!");
+      return;
     }
-  </script>
 
+    loadingDiv.style.display = "block";
 
-</!doctype>
+    try {
+      const response = await fetch(`https://social-media-video-downloader.p.rapidapi.com/smvd/get/youtube?url=${encodeURIComponent(url)}`, {
+        method: "GET",
+        headers: {
+          "X-RapidAPI-Key": "837393c934msh8747bcb37b91d8ep1ba687jsn4ed59f6c1497",
+          "X-RapidAPI-Host": "social-media-video-downloader.p.rapidapi.com"
+        }
+      });
+
+      const data = await response.json();
+      loadingDiv.style.display = "none";
+
+      if (data && data.link) {
+        const downloadLink = document.createElement('a');
+        downloadLink.href = data.link;
+        downloadLink.download = '';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      } else {
+        alert("Gagal menemukan link download. Coba lagi ya!");
+      }
+
+    } catch (error) {
+      console.error(error);
+      loadingDiv.style.display = "none";
+      alert("Terjadi kesalahan saat mengunduh.");
+    }
+  }
+</script>
+
+</body>
+</html>
