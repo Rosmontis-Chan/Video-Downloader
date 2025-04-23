@@ -115,23 +115,25 @@
 <div id="resolution-selector">
   <div class="spinner"></div>
   <h3>Memilih Resolusi HD...</h3>
-  <button class="res-button">480p</button>
-  <button class="res-button">720p</button>
-  <button class="res-button">1080p</button>
+  <div id="res-buttons"></div>
 </div>
 
 <p class="note">Support YouTube, TikTok, Instagram, Facebook & banyak lagi.</p>
 
   </div>  <script>
+    let videoLinks = [];
+
     async function downloadVideo() {
       const url = document.getElementById("url").value.trim();
       const loading = document.getElementById("loading");
       const resSelector = document.getElementById("resolution-selector");
+      const resButtons = document.getElementById("res-buttons");
 
       if (!url) return alert("Masukkan URL video dulu yaa!");
 
       loading.style.display = "block";
       resSelector.style.display = "none";
+      resButtons.innerHTML = "";
 
       const endpoint = "https://social-media-video-downloader.p.rapidapi.com/smvd/get/all?url=" + encodeURIComponent(url);
 
@@ -147,15 +149,24 @@
         loading.style.display = "none";
 
         if (data && Array.isArray(data.links) && data.links.length) {
-          const dl = data.links[0].link;
-          const a = document.createElement("a");
-          a.href = dl; a.download = "";
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-
-          // Show resolution selector after download
+          videoLinks = data.links;
           resSelector.style.display = "block";
+
+          videoLinks.forEach(link => {
+            const btn = document.createElement("button");
+            btn.className = "res-button";
+            btn.innerText = link.quality || "Download";
+            btn.onclick = () => {
+              const a = document.createElement("a");
+              a.href = link.link;
+              a.download = "";
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+            };
+            resButtons.appendChild(btn);
+          });
+
         } else {
           alert("Gagal menemukan link download.");
         }
