@@ -111,6 +111,11 @@
       background: #4fc3f7;
       transform: scale(1.05);
     }
+    .active-button {
+      background: #ccc !important;
+      color: #555 !important;
+      transform: scale(0.98);
+    }
     p.note {
       font-size: 0.9em; color: #aaa; margin-top: 20px;
     }
@@ -177,14 +182,22 @@
           videoLinks.forEach(link => {
             const btn = document.createElement("button");
             btn.className = "res-button";
+
             let label = "";
             if (link.type && link.type.toLowerCase().includes("audio")) {
               label = "Audio";
             } else {
-              label = (link.format || "MP4") + " " + (link.quality || "");
+              let quality = link.quality || "";
+              quality = quality.replace(/video_|render_|_\d+/gi, "");
+              label = (link.format || "MP4") + " " + quality.trim();
             }
+
             btn.innerText = label.trim();
+
             btn.onclick = () => {
+              document.querySelectorAll(".res-button").forEach(b => b.classList.remove("active-button"));
+              btn.classList.add("active-button");
+
               if (link.link) {
                 const a = document.createElement("a");
                 a.href = link.link;
@@ -196,6 +209,7 @@
                 errorMsg.style.display = "block";
               }
             };
+
             resButtons.appendChild(btn);
           });
 
