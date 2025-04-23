@@ -73,19 +73,20 @@
       margin-top: 20px;
       animation: fadeIn 1s ease-in-out;
     }
-    #error-message {
+    #error-message, #limited-message {
       display: none;
       margin: 20px auto;
       padding: 20px;
       max-width: 500px;
-      background: #f5f5f5;
-      border: 2px dashed #ccc;
+      background: #ffffff;
+      border: 3px solid;
+      border-image: linear-gradient(45deg, #81d4fa, #f48fb1, #ce93d8) 1;
       border-radius: 25px;
       color: #555;
       font-size: 1.1em;
-      animation: typing 3s steps(40, end) 1;
-      overflow: hidden;
       white-space: nowrap;
+      overflow: hidden;
+      animation: typing 3s steps(50, end) 1, fadeIn 0.5s ease-in-out;
     }
     @keyframes typing {
       from { width: 0; }
@@ -142,6 +143,7 @@
 </div>
 
 <div id="error-message">MAAF RESOLUSI INI TIDAK TERSEDIA, COBA RESOLUSI LAIN</div>
+<div id="limited-message">Hanya Ini Resolusi Tersediakan di video Tersebut</div>
 
 <p class="note">Support YouTube, TikTok, Instagram, Facebook & banyak lagi.</p>
 
@@ -154,6 +156,7 @@
       const resSelector = document.getElementById("resolution-selector");
       const resButtons = document.getElementById("res-buttons");
       const errorMsg = document.getElementById("error-message");
+      const limitedMsg = document.getElementById("limited-message");
 
       if (!url) return alert("Masukkan URL video dulu yaa!");
 
@@ -161,6 +164,7 @@
       resSelector.style.display = "none";
       resButtons.innerHTML = "";
       errorMsg.style.display = "none";
+      limitedMsg.style.display = "none";
 
       const endpoint = "https://social-media-video-downloader.p.rapidapi.com/smvd/get/all?url=" + encodeURIComponent(url);
 
@@ -179,7 +183,9 @@
           videoLinks = data.links;
           resSelector.style.display = "block";
 
+          let count = 0;
           videoLinks.forEach(link => {
+            if (!link.link) return;
             const btn = document.createElement("button");
             btn.className = "res-button";
 
@@ -211,7 +217,12 @@
             };
 
             resButtons.appendChild(btn);
+            count++;
           });
+
+          if (count <= 2) {
+            limitedMsg.style.display = "block";
+          }
 
         } else {
           alert("Gagal menemukan link download.");
