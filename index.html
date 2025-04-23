@@ -73,6 +73,24 @@
       margin-top: 20px;
       animation: fadeIn 1s ease-in-out;
     }
+    #error-message {
+      display: none;
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 500px;
+      background: #f5f5f5;
+      border: 2px dashed #ccc;
+      border-radius: 25px;
+      color: #555;
+      font-size: 1.1em;
+      animation: typing 3s steps(40, end) 1;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
     @keyframes fadeIn {
       from {opacity: 0;}
       to {opacity: 1;}
@@ -118,6 +136,8 @@
   <div id="res-buttons"></div>
 </div>
 
+<div id="error-message">MAAF RESOLUSI INI TIDAK TERSEDIA, COBA RESOLUSI LAIN</div>
+
 <p class="note">Support YouTube, TikTok, Instagram, Facebook & banyak lagi.</p>
 
   </div>  <script>
@@ -128,12 +148,14 @@
       const loading = document.getElementById("loading");
       const resSelector = document.getElementById("resolution-selector");
       const resButtons = document.getElementById("res-buttons");
+      const errorMsg = document.getElementById("error-message");
 
       if (!url) return alert("Masukkan URL video dulu yaa!");
 
       loading.style.display = "block";
       resSelector.style.display = "none";
       resButtons.innerHTML = "";
+      errorMsg.style.display = "none";
 
       const endpoint = "https://social-media-video-downloader.p.rapidapi.com/smvd/get/all?url=" + encodeURIComponent(url);
 
@@ -155,14 +177,24 @@
           videoLinks.forEach(link => {
             const btn = document.createElement("button");
             btn.className = "res-button";
-            btn.innerText = link.quality || "Download";
+            let label = "";
+            if (link.type && link.type.toLowerCase().includes("audio")) {
+              label = "Audio";
+            } else {
+              label = (link.format || "MP4") + " " + (link.quality || "");
+            }
+            btn.innerText = label.trim();
             btn.onclick = () => {
-              const a = document.createElement("a");
-              a.href = link.link;
-              a.download = "";
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
+              if (link.link) {
+                const a = document.createElement("a");
+                a.href = link.link;
+                a.download = "";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+              } else {
+                errorMsg.style.display = "block";
+              }
             };
             resButtons.appendChild(btn);
           });
