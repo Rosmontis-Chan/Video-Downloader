@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html><html lang="id">
 <head>
   <meta charset="UTF-8">
   <title>Video Downloader Kawaii</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    /* ——— Styling Kawaii Putih-Abu Grid ——— */
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
@@ -62,7 +60,7 @@
       display: none; margin-top: 20px; font-size: 0.9em; color: #999;
     }
     .spinner {
-      border: 4px solid #f3f3f3; border-top: 4px solid #a29bfe;
+      border: 4px solid #f3f3f3; border-top: 4px solid #4fc3f7;
       border-radius: 50%; width: 30px; height: 30px;
       animation: spin 1s linear infinite; margin: 10px auto;
     }
@@ -70,49 +68,72 @@
       0%   { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    #resolution-selector {
+      display: none;
+      margin-top: 20px;
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+    .res-button {
+      background: #81d4fa;
+      color: #01579b;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      margin: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      box-shadow: 0 3px 7px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+    .res-button:hover {
+      background: #4fc3f7;
+      transform: scale(1.05);
+    }
     p.note {
       font-size: 0.9em; color: #aaa; margin-top: 20px;
     }
   </style>
 </head>
-<body>
-
-  <div class="banner">SELAMAT DATANG</div>
-
-  <div class="container">
-    <!-- Gambar -->
+<body>  <div class="banner">SELAMAT DATANG</div>  <div class="container">
     <div class="image-wrapper">
-      <img 
-        src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh1pwO52hgZ0o0ZPrJg2CL3NcrD0tgYCMQuc5JIhBrNMiASdNSFnmHCVfr6YeaJsRxfQx-Frn-CcZYqz2gMwh_T-4Gohn7MFrJrLrgstuwHRBNgBtT-bkHRGswLHD3KfDAkZt_uHQoXEoeSXErvkbx1zRafsZtJ8IcBVVhk81jKuAVsX2WyP0HGzHbbv7A/s736/cb74b4cf255d77188a95fd04d1e76d7c.jpg" 
-        alt="Gambar Kawaii"
-      >
-    </div>
+      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh1pwO52hgZ0o0ZPrJg2CL3NcrD0tgYCMQuc5JIhBrNMiASdNSFnmHCVfr6YeaJsRxfQx-Frn-CcZYqz2gMwh_T-4Gohn7MFrJrLrgstuwHRBNgBtT-bkHRGswLHD3KfDAkZt_uHQoXEoeSXErvkbx1zRafsZtJ8IcBVVhk81jKuAVsX2WyP0HGzHbbv7A/s736/cb74b4cf255d77188a95fd04d1e76d7c.jpg" alt="Gambar Kawaii">
+    </div><h1>Download Video</h1>
 
-    <h1>Download Video</h1>
+<input id="url" type="text" placeholder="Tempelkan link video di sini…" />
+<br>
+<button onclick="downloadVideo()">Mulai Download</button>
 
-    <input id="url" type="text" placeholder="Tempelkan link video di sini…" />
-    <br>
-    <button onclick="downloadVideo()">Mulai Download</button>
+<div id="loading">
+  <div class="spinner"></div>
+  <p>Sebentar yaa, lagi diproses…</p>
+</div>
 
-    <div id="loading">
-      <div class="spinner"></div>
-      <p>Sebentar yaa, lagi diproses…</p>
-    </div>
+<div id="resolution-selector">
+  <div class="spinner"></div>
+  <h3>Memilih Resolusi HD...</h3>
+  <button class="res-button">480p</button>
+  <button class="res-button">720p</button>
+  <button class="res-button">1080p</button>
+</div>
 
-    <p class="note">Support YouTube, TikTok, Instagram, Facebook & banyak lagi.</p>
-  </div>
+<p class="note">Support YouTube, TikTok, Instagram, Facebook & banyak lagi.</p>
 
-  <script>
+  </div>  <script>
     async function downloadVideo() {
       const url = document.getElementById("url").value.trim();
       const loading = document.getElementById("loading");
+      const resSelector = document.getElementById("resolution-selector");
+
       if (!url) return alert("Masukkan URL video dulu yaa!");
 
       loading.style.display = "block";
+      resSelector.style.display = "none";
 
-      const endpoint = 
-        "https://social-media-video-downloader.p.rapidapi.com/smvd/get/all?url=" 
-        + encodeURIComponent(url);
+      const endpoint = "https://social-media-video-downloader.p.rapidapi.com/smvd/get/all?url=" + encodeURIComponent(url);
 
       try {
         const resp = await fetch(endpoint, {
@@ -132,6 +153,9 @@
           document.body.appendChild(a);
           a.click();
           a.remove();
+
+          // Show resolution selector after download
+          resSelector.style.display = "block";
         } else {
           alert("Gagal menemukan link download.");
         }
@@ -141,7 +165,5 @@
         alert("Terjadi kesalahan. Coba lagi nanti.");
       }
     }
-  </script>
-
-</body>
+  </script></body>
 </html>
