@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Video Downloader Kawaii</title>
+  <title>Video Downloader</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -74,42 +74,6 @@
       margin-top: 20px;
       animation: fadeIn 1s ease-in-out;
     }
-    #error-message {
-      display: none;
-      margin: 20px auto;
-      padding: 20px;
-      max-width: 500px;
-      background: #ffffff;
-      border: 3px solid;
-      border-image: linear-gradient(45deg, #81d4fa, #f48fb1, #ce93d8) 1;
-      border-radius: 25px;
-      color: #555;
-      font-size: 1.1em;
-      white-space: nowrap;
-      overflow: hidden;
-      animation: typing 3s steps(50, end) 1, fadeIn 0.5s ease-in-out;
-    }
-    .kotak-mini-kawaii {
-      display: none;
-      margin: 20px auto;
-      padding: 12px 16px;
-      background: #e1f5fe;
-      color: #0277bd;
-      font-size: 0.95em;
-      text-align: center;
-      border: 2px dashed #81d4fa;
-      border-radius: 25px;
-      max-width: 360px;
-      animation: typing 3s steps(40, end) 1, fadeIn 0.8s ease-in-out;
-    }
-    @keyframes typing {
-      from { width: 0; }
-      to { width: 100%; }
-    }
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
     .res-button {
       background: #81d4fa;
       color: #01579b;
@@ -153,13 +117,10 @@
     </div>
 
     <div id="resolution-selector">
-      <div class="spinner"></div>
-      <h3>Memilih Resolusi HD...</h3>
+      <h3>Pilih Kualitas Video:</h3>
       <div id="res-buttons"></div>
     </div>
 
-    <div id="error-message">MAAF RESOLUSI INI TIDAK TERSEDIA, COBA RESOLUSI LAIN</div>
-    <div id="limited-message" class="kotak-mini-kawaii">Hanya Ini Resolusi Tersediakan di video Tersebut</div>
     <p class="note">Support YouTube, TikTok, Instagram, Facebook & banyak lagi.</p>
   </div>
 
@@ -169,16 +130,12 @@
       const loading = document.getElementById("loading");
       const resSelector = document.getElementById("resolution-selector");
       const resButtons = document.getElementById("res-buttons");
-      const errorMsg = document.getElementById("error-message");
-      const limitedMsg = document.getElementById("limited-message");
 
       if (!url) return alert("Masukkan URL video dulu yaa!");
 
       loading.style.display = "block";
       resSelector.style.display = "none";
       resButtons.innerHTML = "";
-      errorMsg.style.display = "none";
-      limitedMsg.style.display = "none";
 
       const endpoint = "https://social-media-video-downloader.p.rapidapi.com/smvd/get/all?url=" + encodeURIComponent(url);
 
@@ -190,57 +147,60 @@
             "X-RapidAPI-Host": "social-media-video-downloader.p.rapidapi.com"
           }
         });
-
         const data = await resp.json();
         loading.style.display = "none";
 
         if (data && Array.isArray(data.links) && data.links.length) {
-          resSelector.style.display = "block";
-          let count = 0;
+          const qualityMap = {
+            "360": "MP4 360p (Video + Audio)",
+            "480": "MP4 480p (Video + Audio)",
+            "720": "MP4 720p (Video + Audio)",
+            "1080": "MP4 1080p (Video + Audio)",
+            "audio_low": "MP3 (Hanya Audio)",
+            "audio_medium": "MP3 (Hanya Audio)"
+          };
+
+          const addedLabels = new Set();
 
           data.links.forEach(link => {
             if (!link.link) return;
 
+            let label = "";
+            const isAudio = link.type && link.type.toLowerCase().includes("audio");
+
+            if (isAudio) {
+              const key = link.quality.toLowerCase().includes("medium") ? "audio_medium" : "audio_low";
+              label = qualityMap[key];
+            } else {
+              const q = link.quality.match(/\d+/);
+              label = q ? qualityMap[q[0]] : "";
+            }
+
+            if (!label || addedLabels.has(label)) return;
+            addedLabels.add(label);
+
             const btn = document.createElement("button");
             btn.className = "res-button";
-
-            let format = link.format || "MP4";
-            let quality = link.quality ? link.quality.replace(/video_|render_|_\d+/gi, "").trim() : "Unknown";
-            let isAudioOnly = link.type && link.type.toLowerCase().includes("audio");
-            let hasAudio = link.audio !== false;
-
-            let label = isAudioOnly
-              ? "Audio Only"
-              : `${format} ${quality}${hasAudio ? "" : " (No Audio)"}`;
-
             btn.innerText = label;
 
             btn.onclick = () => {
               document.querySelectorAll(".res-button").forEach(b => b.classList.remove("active-button"));
               btn.classList.add("active-button");
 
-              if (link.link) {
-                const a = document.createElement("a");
-                a.href = link.link;
-                a.download = "";
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-              } else {
-                errorMsg.style.display = "block";
-              }
+              const a = document.createElement("a");
+              a.href = link.link;
+              a.download = "";
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
             };
 
             resButtons.appendChild(btn);
-            count++;
           });
 
-          if (count <= 3) {
-            limitedMsg.style.display = "block";
-          }
-
+          resSelector.style.display = "block";
         } else {
-          alert("Gagal menemukan link download.");
+          alert("Tidak ditemukan link download.");
         }
       } catch (e) {
         console.error(e);
