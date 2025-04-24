@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <title>Video Downloader Kawaii</title>
@@ -135,32 +136,34 @@
     }
   </style>
 </head>
-<body>  <div class="banner">SELAMAT DATANG</div>  <div class="container">
+<body>
+  <div class="banner">SELAMAT DATANG</div>
+  <div class="container">
     <div class="image-wrapper">
       <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh1pwO52hgZ0o0ZPrJg2CL3NcrD0tgYCMQuc5JIhBrNMiASdNSFnmHCVfr6YeaJsRxfQx-Frn-CcZYqz2gMwh_T-4Gohn7MFrJrLrgstuwHRBNgBtT-bkHRGswLHD3KfDAkZt_uHQoXEoeSXErvkbx1zRafsZtJ8IcBVVhk81jKuAVsX2WyP0HGzHbbv7A/s736/cb74b4cf255d77188a95fd04d1e76d7c.jpg" alt="Gambar Kawaii">
-    </div><h1>Download Video</h1>
+    </div>
+    <h1>Download Video</h1>
+    <input id="url" type="text" placeholder="Tempelkan link video di sini…" />
+    <br>
+    <button onclick="downloadVideo()">Mulai Download</button>
 
-<input id="url" type="text" placeholder="Tempelkan link video di sini…" />
-<br>
-<button onclick="downloadVideo()">Mulai Download</button>
+    <div id="loading">
+      <div class="spinner"></div>
+      <p>Sebentar yaa, lagi diproses…</p>
+    </div>
 
-<div id="loading">
-  <div class="spinner"></div>
-  <p>Sebentar yaa, lagi diproses…</p>
-</div>
+    <div id="resolution-selector">
+      <div class="spinner"></div>
+      <h3>Memilih Resolusi HD...</h3>
+      <div id="res-buttons"></div>
+    </div>
 
-<div id="resolution-selector">
-  <div class="spinner"></div>
-  <h3>Memilih Resolusi HD...</h3>
-  <div id="res-buttons"></div>
-</div>
+    <div id="error-message">MAAF RESOLUSI INI TIDAK TERSEDIA, COBA RESOLUSI LAIN</div>
+    <div id="limited-message" class="kotak-mini-kawaii">Hanya Ini Resolusi Tersediakan di video Tersebut</div>
+    <p class="note">Support YouTube, TikTok, Instagram, Facebook & banyak lagi.</p>
+  </div>
 
-<div id="error-message">MAAF RESOLUSI INI TIDAK TERSEDIA, COBA RESOLUSI LAIN</div>
-<div id="limited-message" class="kotak-mini-kawaii">Hanya Ini Resolusi Tersediakan di video Tersebut</div>
-
-<p class="note">Support YouTube, TikTok, Instagram, Facebook & banyak lagi.</p>
-
-  </div>  <script>
+  <script>
     async function downloadVideo() {
       const url = document.getElementById("url").value.trim();
       const loading = document.getElementById("loading");
@@ -187,29 +190,30 @@
             "X-RapidAPI-Host": "social-media-video-downloader.p.rapidapi.com"
           }
         });
+
         const data = await resp.json();
         loading.style.display = "none";
 
         if (data && Array.isArray(data.links) && data.links.length) {
           resSelector.style.display = "block";
-
           let count = 0;
+
           data.links.forEach(link => {
             if (!link.link) return;
 
             const btn = document.createElement("button");
             btn.className = "res-button";
 
-            let label = "";
-            if (link.type && link.type.toLowerCase().includes("audio")) {
-              label = "Audio";
-            } else {
-              let quality = link.quality || "";
-              quality = quality.replace(/video_|render_|_\d+/gi, "");
-              label = (link.format || "MP4") + " " + quality.trim();
-            }
+            let format = link.format || "MP4";
+            let quality = link.quality ? link.quality.replace(/video_|render_|_\d+/gi, "").trim() : "Unknown";
+            let isAudioOnly = link.type && link.type.toLowerCase().includes("audio");
+            let hasAudio = link.audio !== false;
 
-            btn.innerText = label.trim();
+            let label = isAudioOnly
+              ? "Audio Only"
+              : `${format} ${quality}${hasAudio ? "" : " (No Audio)"}`;
+
+            btn.innerText = label;
 
             btn.onclick = () => {
               document.querySelectorAll(".res-button").forEach(b => b.classList.remove("active-button"));
@@ -244,5 +248,6 @@
         alert("Terjadi kesalahan. Coba lagi nanti.");
       }
     }
-  </script></body>
+  </script>
+</body>
 </html>
