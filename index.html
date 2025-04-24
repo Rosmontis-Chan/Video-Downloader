@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <title>Video Downloader Kawaii</title>
@@ -131,21 +132,24 @@
     </div>
     <h1>Download Video</h1>
     <input id="url" type="text" placeholder="Tempelkan link video di sini…" /><br>
-    <button onclick="downloadVideo()">Mulai Download</button><div id="loading">
-  <div class="spinner"></div>
-  <p>Sedang diproses…</p>
-</div>
+    <button onclick="downloadVideo()">Mulai Download</button>
 
-<div id="resolution-selector">
-  <h3>Pilih Kualitas Video:</h3>
-  <div id="res-buttons"></div>
-</div>
+    <div id="loading">
+      <div class="spinner"></div>
+      <p>Sedang diproses…</p>
+    </div>
 
-<div id="error-message">Maaf, video+audio tidak tersedia.</div>
-<div id="limited-message">Video ini hanya tersedia dalam resolusi ini.</div>
-<p class="note">Support YouTube, TikTok, Instagram, Facebook & banyak lagi.</p>
+    <div id="resolution-selector">
+      <h3>Pilih Kualitas Video:</h3>
+      <div id="res-buttons"></div>
+    </div>
 
-  </div>  <script>
+    <div id="error-message">Maaf, video+audio tidak tersedia.</div>
+    <div id="limited-message">Hanya resolusi tertentu tersedia untuk video ini.</div>
+    <p class="note">Support YouTube, TikTok, Instagram, Facebook & banyak lagi.</p>
+  </div>
+
+  <script>
     async function downloadVideo() {
       const url = document.getElementById("url").value.trim();
       const loading = document.getElementById("loading");
@@ -207,7 +211,7 @@
         );
         if (a) {
           createButton("MP3 (Hanya Audio)", a.link);
-          count++;  
+          count++;
         }
 
         if (count) {
@@ -232,4 +236,15 @@
                   .forEach(b => b.classList.remove("active-button"));
           btn.classList.add("active-button");
           const a = document.createElement("a");
-       
+          a.href = href;
+          a.download = "";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        };
+        resButtons.appendChild(btn);
+      }
+    }
+  </script>
+</body>
+  </html>
