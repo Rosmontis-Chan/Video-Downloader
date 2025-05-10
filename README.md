@@ -3,6 +3,10 @@
 </h1>
 
 <p align="center">
+  <img src="https://github.com/Rosmontis-Chan/Video-Downloader/blob/main/Screenshot_2025-05-10-15-13-27-826_mark.via.gp.jpg?raw=true" alt="Tampilan Aplikasi" width="600">
+</p>
+
+<p align="center">
   Sebuah alat ringan dan praktis untuk mengunduh video dari berbagai platform langsung melalui antarmuka web yang sederhana.
 </p>
 
