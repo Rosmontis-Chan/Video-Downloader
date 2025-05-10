@@ -18,7 +18,6 @@
 - Unduh video dari berbagai sumber dengan satu klik.
 - Antarmuka bersih dan mudah digunakan.
 - Dukungan untuk berbagai format dan kualitas.
-- Dapat dijalankan secara lokal atau lewat platform cloud seperti Hugging Face Spaces.
 
 ---
 
