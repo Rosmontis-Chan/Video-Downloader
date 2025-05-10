@@ -21,9 +21,12 @@
 
 ---
 
-## ✦ Cara Pakai
+## ✦ Clone 
 
 1. **Clone repositori:**
    ```bash
    git clone https://github.com/Rosmontis-Chan/Video-Downloader
    cd Video-Downloader
+
+## ✦ Cara pakainya 
+ “Cukup masukin linknya seperti link video Facebook lalu klik download dan selesai. 
